@@ -22,3 +22,22 @@ var oauth = new OAuth.OAuth(
 	'HMAC-SHA1'
 );
 
+
+function apiCall(api, userId, callback) {
+	User.findOne({ 'encodedId': userId },
+	function(err, user) {
+		if (err) {
+			console.error("error finding user", err)
+			return;
+		}
+
+		oauth.get('https://api.fitbit.com/1/user/2D3YGV/activities/date/2014-01-01.json',
+			user.accessToken,
+			user.accessSecret,
+			function(e, data, req) {
+				console.log(data);
+			}
+		);
+	});
+
+}

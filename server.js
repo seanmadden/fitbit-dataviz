@@ -25,6 +25,7 @@ require('./models/user');
 
 var conn = mongoose.connection;
 var fitbit_api = require("./api/fitbit-auth.js");
+var User = mongoose.model('User');
 
 conn.on('error', function() {
 	 console.log("error connecting to db");
@@ -68,5 +69,18 @@ app.get('/api/fitbit',
 			}
 		);
 		res.redirect('/');
+	}
+);
+
+
+app.get('/api/internal/users',
+	function(req, res) {
+		User.find().exec(function(err, users) {
+			if (err) {
+				console.error('error fetching users', err);
+				return;
+			}
+			res.send(users);
+		});
 	}
 );

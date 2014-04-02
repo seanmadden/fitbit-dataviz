@@ -56,7 +56,8 @@ passport.use(new FitbitStrat({
 		);
 
 		//Save the user to the mongoDB
-		User.update({
+		User.update({ encodedId: profile.id },
+			{
 			encodedId: profile.id,
 			accessToken: t,
 			accessSecret: ts
@@ -66,7 +67,7 @@ passport.use(new FitbitStrat({
 			if (err) {
 				console.log(err)
 			} else {
-				console.log('User updated');
+				console.log('User updated', numberAffected);
 			}
 		});
 
