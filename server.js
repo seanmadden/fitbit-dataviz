@@ -1,8 +1,8 @@
 var express = require("express");
-var fitbit_api = require("./api/fitbit-auth.js");
 var passport = require("passport");
 var OAuth = require("oauth");
 var env = require('./env.json');
+var mongoose = require('mongoose');
 var app = express();
 
 app.use('/', express.static(__dirname + '/view'));
@@ -19,6 +19,20 @@ console.log("listening on port 3000");
 
 var consumerKey = env.dev.consumerKey,
 	consumerSecret = env.dev.consumerSecret;
+
+mongoose.connect("mongodb://localhost/test");
+require('./models/user');
+
+var conn = mongoose.connection;
+var fitbit_api = require("./api/fitbit-auth.js");
+
+conn.on('error', function() {
+	 console.log("error connecting to db");
+});
+
+conn.on('open', function() {
+	console.log("db open");
+});
 
 app.get('/auth/fitbit',
 	passport.authenticate('fitbit'),

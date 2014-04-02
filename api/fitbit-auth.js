@@ -7,6 +7,8 @@ var OAuth = require('oauth');
 var passport = require('passport'),
 	FitbitStrat = require('passport-fitbit').Strategy;
 var env = require('../env.json');
+var mongoose = require("mongoose");
+var User = mongoose.model('User');
 
 var api = 'https://api.fitbit.com';
 
@@ -52,6 +54,21 @@ passport.use(new FitbitStrat({
 			null,
 			'HMAC-SHA1'
 		);
+
+		//Save the user to the mongoDB
+		User.update({
+			encodedId: profile.id,
+			accessToken: t,
+			accessSecret: ts
+		}, {
+			upsert: true
+		}, function(err, numberAffected) {
+			if (err) {
+				console.log(err)
+			} else {
+				console.log('User updated');
+			}
+		});
 
 		token = t;
 		tokenSecret = ts;
