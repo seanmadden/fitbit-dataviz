@@ -49,7 +49,7 @@ app.get('/auth/fitbit/callback',
 	}
 );
 
-app.get('/api/fitbit',
+app.get('/api/fitbit/:userid',
 	function(req, res) {
 		var oauth = new OAuth.OAuth(
 			'https://api.fitbit.com/oauth/request_token',
@@ -63,11 +63,11 @@ app.get('/api/fitbit',
 
 		//Get the user from the db
 		User.findOne(
-			{encodedId: '2D3YGV'},
+			{encodedId: req.params.userid},
 			'accessSecret accessToken',
 			function(err, user) {
 				console.log(user);
-				oauth.get('https://api.fitbit.com/1/user/2D3YGV/activities/date/2014-03-29.json',
+				oauth.get('https://api.fitbit.com/1/user/' + req.params.userid + '/activities/date/2014-03-29.json',
 					user.accessToken,
 					user.accessSecret,
 					function(e, data, req) {
