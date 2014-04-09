@@ -1,0 +1,24 @@
+<ul ng-repeat="userID in userList">
+    <li><a href="" ng-click="getUserInfo(userID)">{{userID}}</a></li>
+</ul>
+
+
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th>Calories Out</th>
+            <th>Total Steps</th>
+        </tr>
+        </thead>
+        <tr>
+            <td>
+                {{userInfo.summary.caloriesOut}}
+            </td>
+            <td>
+                {{userInfo.summary.steps}}
+            </td>
+        </tr>
+    </table>
+
+</div>

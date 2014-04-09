@@ -49,7 +49,7 @@ app.get('/auth/fitbit/callback',
 	}
 );
 
-app.get('/api/fitbit/:userid',
+app.get('/api/fitbit/user/:userid',
 	function(req, res) {
 		var oauth = new OAuth.OAuth(
 			'https://api.fitbit.com/oauth/request_token',
@@ -67,16 +67,14 @@ app.get('/api/fitbit/:userid',
 			'accessSecret accessToken',
 			function(err, user) {
 				console.log(user);
-				oauth.get('https://api.fitbit.com/1/user/' + req.params.userid + '/activities/date/2014-03-29.json',
+				oauth.get('https://api.fitbit.com/1/user/' + req.params.userid + '/activities/date/2014-04-06.json',
 					user.accessToken,
 					user.accessSecret,
 					function(e, data, req) {
-						console.log(data);
+						res.send(data);
 					}
 				);
 		});
-
-		res.redirect('/');
 	}
 );
 
