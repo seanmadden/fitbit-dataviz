@@ -5,7 +5,7 @@
 
 var OAuth = require('oauth');
 var passport = require('passport'),
-	FitbitStrat = require('passport-fitbit').Strategy;
+    FitbitStrat = require('passport-fitbit').Strategy;
 var env = require('../env.json');
 var mongoose = require("mongoose");
 var User = mongoose.model('User');
@@ -13,15 +13,15 @@ var User = mongoose.model('User');
 var api = 'https://api.fitbit.com';
 
 var consumerKey = env.dev.consumerKey,
-	consumerSecret = env.dev.consumerSecret;
+    consumerSecret = env.dev.consumerSecret;
 
 var token, tokenSecret;
 exports.token = function() {
-	return token;
+    return token;
 };
 
 exports.tokenSecret = function() {
-	return tokenSecret;
+    return tokenSecret;
 };
 
 // Passport session setup.
@@ -32,52 +32,52 @@ exports.tokenSecret = function() {
 //   have a database of user records, the complete Fitbit profile is serialized
 //   and deserialized.
 passport.serializeUser(function(user, done) {
-	done(null, user);
+    done(null, user);
 });
 
 passport.deserializeUser(function(obj, done) {
-	done(null, obj);
+    done(null, obj);
 });
 
 passport.use(new FitbitStrat({
-	consumerKey: consumerKey,
-	consumerSecret: consumerSecret,
-	callbackURL: "http://localhost:3000/auth/fitbit/callback"
-},
-	function(t, ts, profile, done) {
-		var oauth = new OAuth.OAuth(
-			'https://api.fitbit.com/oauth/request_token',
-			'https://api.fitbit.com/oauth/access_token',
-			consumerKey,
-			consumerSecret,
-			'1.0',
-			null,
-			'HMAC-SHA1'
-		);
+        consumerKey: consumerKey,
+        consumerSecret: consumerSecret,
+        callbackURL: "http://localhost:3000/auth/fitbit/callback"
+    },
+    function(t, ts, profile, done) {
+        var oauth = new OAuth.OAuth(
+            'https://api.fitbit.com/oauth/request_token',
+            'https://api.fitbit.com/oauth/access_token',
+            consumerKey,
+            consumerSecret,
+            '1.0',
+            null,
+            'HMAC-SHA1'
+        );
 
-		//Save the user to the mongoDB
-		User.update({ encodedId: profile.id },
-			{
-			encodedId: profile.id,
-			accessToken: t,
-			accessSecret: ts
-		}, {
-			upsert: true
-		}, function(err, numberAffected) {
-			if (err) {
-				console.log(err)
-			} else {
-				console.log('User updated', numberAffected);
-			}
-		});
+        //Save the user to the mongoDB
+        User.update({ encodedId: profile.id },
+            {
+                encodedId: profile.id,
+                accessToken: t,
+                accessSecret: ts
+            }, {
+                upsert: true
+            }, function(err, numberAffected) {
+                if (err) {
+                    console.log(err)
+                } else {
+                    console.log('User updated', numberAffected);
+                }
+            });
 
-		token = t;
-		tokenSecret = ts;
+        token = t;
+        tokenSecret = ts;
 
-		console.log("TOKEN: " + t);
-		console.log("TOKEN-SECRET: " + ts);
+        console.log("TOKEN: " + t);
+        console.log("TOKEN-SECRET: " + ts);
 
-		return done(null, profile);
+        return done(null, profile);
 
-	}
+    }
 ));
