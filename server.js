@@ -61,13 +61,21 @@ app.get('/api/fitbit',
 			'HMAC-SHA1'
 		);
 
-		oauth.get('https://api.fitbit.com/1/user/2D3YGV/activities/date/2014-03-29.json',
-			fitbit_api.token(),
-			fitbit_api.tokenSecret(),
-			function(e, data, req) {
-				console.log(data);
-			}
-		);
+		//Get the user from the db
+		User.findOne(
+			{encodedId: '2D3YGV'},
+			'accessSecret accessToken',
+			function(err, user) {
+				console.log(user);
+				oauth.get('https://api.fitbit.com/1/user/2D3YGV/activities/date/2014-03-29.json',
+					user.accessToken,
+					user.accessSecret,
+					function(e, data, req) {
+						console.log(data);
+					}
+				);
+		});
+
 		res.redirect('/');
 	}
 );
