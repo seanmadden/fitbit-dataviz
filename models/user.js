@@ -11,7 +11,9 @@ var UserSchema = new Schema({
     accessToken: {type: String, required: true},
     accessSecret: {type: String, required: true},
     stepsToday: Number,
-    stepsGoal: Number
+    stepsGoal: Number,
+    joinDate: Date,
+    displayName: String
 });
 
 var User = mongoose.model('User', UserSchema);

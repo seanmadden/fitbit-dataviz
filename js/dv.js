@@ -31,8 +31,6 @@ angular.module('dataviz', ['fitbitService', 'ngRoute'])
         };
 
         users.$promise.then(function (data) {
-            for (var i = 0; i < data.length; ++i) {
-                $scope.userList.push(data[i].encodedId);
-            }
+            $scope.userList = data;
         });
     });

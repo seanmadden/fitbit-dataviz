@@ -55,12 +55,15 @@ passport.use(new FitbitStrat({
             'HMAC-SHA1'
         );
 
+        var userProfile = profile._json.user;
+
         //Save the user to the mongoDB
         User.update({ encodedId: profile.id },
             {
                 encodedId: profile.id,
                 accessToken: t,
-                accessSecret: ts
+                accessSecret: ts,
+                joinDate: userProfile.memberSince
             }, {
                 upsert: true
             }, function(err, numberAffected) {

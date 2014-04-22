@@ -1,5 +1,5 @@
 <ul ng-repeat="userID in userList">
-    <li><a href="" ng-click="getUserInfo(userID)">{{userID}}</a></li>
+    <li><a href="" ng-click="getUserInfo(userID.encodedId)">{{userID.encodedId}}</a> - {{userID.joinDate}}</li>
 </ul>
 
 
