@@ -9,11 +9,9 @@ var passport = require('passport'),
 var env = require('../env.json');
 var mongoose = require("mongoose");
 var User = mongoose.model('User');
+var fitbitApi = require("./fitbit-api.js")
 
 var api = 'https://api.fitbit.com';
-
-var consumerKey = env.dev.consumerKey,
-    consumerSecret = env.dev.consumerSecret;
 
 var token, tokenSecret;
 exports.token = function() {
@@ -40,21 +38,11 @@ passport.deserializeUser(function(obj, done) {
 });
 
 passport.use(new FitbitStrat({
-        consumerKey: consumerKey,
-        consumerSecret: consumerSecret,
+        consumerKey: fitbitApi.consumerKey,
+        consumerSecret: fitbitApi.consumerSecret,
         callbackURL: "http://localhost:3000/auth/fitbit/callback"
     },
     function(t, ts, profile, done) {
-        var oauth = new OAuth.OAuth(
-            'https://api.fitbit.com/oauth/request_token',
-            'https://api.fitbit.com/oauth/access_token',
-            consumerKey,
-            consumerSecret,
-            '1.0',
-            null,
-            'HMAC-SHA1'
-        );
-
         var userProfile = profile._json.user;
 
         //Save the user to the mongoDB
@@ -77,10 +65,6 @@ passport.use(new FitbitStrat({
         token = t;
         tokenSecret = ts;
 
-        console.log("TOKEN: " + t);
-        console.log("TOKEN-SECRET: " + ts);
-
         return done(null, profile);
-
     }
 ));

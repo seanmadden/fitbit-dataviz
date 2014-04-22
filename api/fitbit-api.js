@@ -8,15 +8,15 @@ var env = require('../env.json');
 var mongoose = require("mongoose");
 var User = mongoose.model('User');
 
-var consumerKey = env.dev.consumerKey,
-    consumerSecret = env.dev.consumerSecret;
+exports.consumerKey = env.dev.consumerKey;
+exports.consumerSecret = env.dev.consumerSecret;
 
 //set up oauth
-var oauth = new OAuth.OAuth(
+exports.oauth = new OAuth.OAuth(
     'https://api.fitbit.com/oauth/request_token',
     'https://api.fitbit.com/oauth/access_token',
-    consumerKey,
-    consumerSecret,
+    this.consumerKey,
+    this.consumerSecret,
     '1.0',
     null,
     'HMAC-SHA1'
@@ -31,7 +31,7 @@ function apiCall(api, userId, callback) {
                 return;
             }
 
-            oauth.get('https://api.fitbit.com/1/user/2D3YGV/activities/date/2014-01-01.json',
+            this.oauth.get('https://api.fitbit.com/1/user/2D3YGV/activities/date/2014-01-01.json',
                 user.accessToken,
                 user.accessSecret,
                 function(e, data, req) {

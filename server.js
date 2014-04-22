@@ -19,8 +19,7 @@ console.log("listening on port 3000");
 
 var consumerKey = env.dev.consumerKey,
     consumerSecret = env.dev.consumerSecret,
-    api = env.dev.api,
-    oauth = null;
+    api = env.dev.api;
 
 mongoose.connect("mongodb://localhost/test");
 require('./models/user');
@@ -28,6 +27,7 @@ require('./models/user');
 var conn = mongoose.connection;
 var fitbit_api = require("./api/fitbit-auth.js");
 var User = mongoose.model('User');
+var fitbitApi = require("./api/fitbit-api.js");
 
 conn.on('error', function() {
     console.log("error connecting to db");
@@ -55,24 +55,13 @@ app.get('/auth/fitbit/callback',
 
 app.get('/api/fitbit/user/:userid',
     function(req, res) {
-        var oauth = new OAuth.OAuth(
-            'https://api.fitbit.com/oauth/request_token',
-            'https://api.fitbit.com/oauth/access_token',
-            consumerKey,
-            consumerSecret,
-            '1.0',
-            null,
-            'HMAC-SHA1'
-        );
-
         //Get the user from the db
         User.findOne(
             {encodedId: req.params.userid},
             'accessSecret accessToken',
             //after the user is found, make the api call
             function(err, user) {
-                console.log(user);
-                oauth.get('https://api.fitbit.com/1/user/' + req.params.userid + '/activities/date/2014-04-06.json',
+                fitbitApi.oauth.get('https://api.fitbit.com/1/user/' + req.params.userid + '/activities/date/2014-04-06.json',
                     user.accessToken,
                     user.accessSecret,
                     function(e, data, req) {
