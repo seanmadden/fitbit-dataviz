@@ -25,8 +25,9 @@ mongoose.connect("mongodb://localhost/test");
 require('./models/user');
 
 var conn = mongoose.connection;
-var fitbit_api = require("./api/fitbit-auth.js");
+var fitbitAuth = require("./api/fitbit-auth.js");
 var User = mongoose.model('User');
+var Info = mongoose.model('Info');
 var fitbitApi = require("./api/fitbit-api.js");
 
 conn.on('error', function() {
@@ -58,17 +59,60 @@ app.get('/api/fitbit/user/:userid',
         //Get the user from the db
         User.findOne(
             {encodedId: req.params.userid},
-            'accessSecret accessToken',
+            'accessSecret accessToken joinDate displayName infoByDate',
             //after the user is found, make the api call
             function(err, user) {
-                fitbitApi.oauth.get('https://api.fitbit.com/1/user/' + req.params.userid + '/activities/date/2014-04-06.json',
+                //can return the user directly
+                res.send(user);
+            }
+        );
+    }
+);
+
+app.get('/api/fitbit/user/refresh/:userid',
+    function(req, res) {
+        //Get the user from the db
+        User.findOne(
+            {encodedId: req.params.userid},
+            'encodedId accessSecret accessToken joinDate displayName infoByDate',
+            //after the user is found, make sure the data is current
+            function(err, user) {
+                var today = new Date();
+                var dateString = today.getFullYear() + '-' + today.getMonth() + '-' + today.getMonth();
+                var userInfoUrl = 'https://api.fitbit.com/1/user/' + user.encodedId + '/activities/date/' + dateString +'.json';
+
+                fitbitApi.oauth.get(
+                    userInfoUrl,
                     user.accessToken,
                     user.accessSecret,
                     function(e, data, req) {
+                        if (data) {
+                            data = JSON.parse(data);
+                        }
+                        //make sure the data is there
+                        if (!data || !data.summary) {
+                            res.send("error");
+                            return;
+                        }
+
+                        var temp = new Info();
+                        temp.date = dateString;
+                        temp.steps = parseInt(data.summary.steps);
+                        temp.caloriesOut = parseInt(data.summary.caloriesOut);
+                        temp.activeMinutes = parseInt(data.summary.veryActiveMinutes);
+
+                        user.infoByDate.push(temp);
+
+                        user.save(function(err, num, raw) {
+                            if (err) console.log(err);
+                            console.log("number updated: ", num);
+                        });
+
                         res.send(data);
                     }
                 );
-            });
+            }
+        );
     }
 );
 

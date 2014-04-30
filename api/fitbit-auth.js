@@ -37,6 +37,7 @@ passport.deserializeUser(function(obj, done) {
     done(null, obj);
 });
 
+//authorizes user on fitbit site, saves their token and secret to mongoDB
 passport.use(new FitbitStrat({
         consumerKey: fitbitApi.consumerKey,
         consumerSecret: fitbitApi.consumerSecret,
@@ -51,7 +52,8 @@ passport.use(new FitbitStrat({
                 encodedId: profile.id,
                 accessToken: t,
                 accessSecret: ts,
-                joinDate: userProfile.memberSince
+                joinDate: userProfile.memberSince,
+                displayName: userProfile.displayName
             }, {
                 upsert: true
             }, function(err, numberAffected) {

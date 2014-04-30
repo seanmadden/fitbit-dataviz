@@ -20,5 +20,14 @@ angular.module("fitbitService", ['ngResource'])
         };
 
         return new fitbitUserInfo;
-    }
-);
+    })
+    .factory('refreshUser', function($resource) {
+        var refreshUser = $resource("/api/fitbit/user/refresh/:userid");
+
+        refreshUser.prototype.getResource = function() {
+            return refreshUser;
+        };
+
+        return new refreshUser;
+    })
+;

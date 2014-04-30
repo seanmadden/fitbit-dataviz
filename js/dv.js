@@ -19,7 +19,7 @@ angular.module('dataviz', ['fitbitService', 'ngRoute'])
             )
         }
     ])
-    .controller('dvController', function dvController($scope, fitbitUsers, fitbitUserInfo) {
+    .controller('dvController', function dvController($scope, fitbitUsers, fitbitUserInfo, refreshUser) {
         var users = fitbitUsers.getResource().query();
         $scope.userList = [];
 
@@ -28,6 +28,13 @@ angular.module('dataviz', ['fitbitService', 'ngRoute'])
             userInfo.$promise.then(function (data) {
                 $scope.userInfo = data;
             });
+        };
+
+        $scope.refreshUserInfo = function (userID) {
+            var userInfo = refreshUser.getResource().get({userid: userID});
+//            userInfo.$promise.then(function (data) {
+//                $scope.userInfo = data;
+//            });
         };
 
         users.$promise.then(function (data) {
