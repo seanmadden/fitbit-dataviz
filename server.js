@@ -27,7 +27,7 @@ require('./models/user');
 var conn = mongoose.connection;
 var fitbitAuth = require("./api/fitbit-auth.js");
 var User = mongoose.model('User');
-var Info = mongoose.model('Info');
+var UserInfo = mongoose.model('UserInfo');
 var fitbitApi = require("./api/fitbit-api.js");
 
 conn.on('error', function() {
@@ -95,7 +95,7 @@ app.get('/api/fitbit/user/refresh/:userid',
                             return;
                         }
 
-                        var temp = new Info();
+                        var temp = new UserInfo();
                         temp.date = dateString;
                         temp.steps = parseInt(data.summary.steps);
                         temp.caloriesOut = parseInt(data.summary.caloriesOut);

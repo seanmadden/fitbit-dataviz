@@ -8,16 +8,20 @@
     <table>
         <thead>
         <tr>
+            <th>Date</th>
             <th>Calories Out</th>
             <th>Total Steps</th>
         </tr>
         </thead>
-        <tr>
+        <tr ng-repeat="info in userInfo.infoByDate">
             <td>
-                {{userInfo.summary.caloriesOut}}
+                {{info.date | date:'MM/dd/yyyy'}}
             </td>
             <td>
-                {{userInfo.summary.steps}}
+                {{info.caloriesOut}}
+            </td>
+            <td>
+                {{info.steps}}
             </td>
         </tr>
     </table>

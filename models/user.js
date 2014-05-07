@@ -6,7 +6,7 @@
 var mongoose = require('mongoose');
 Schema = mongoose.Schema;
 
-var InfoSchema = new Schema({
+var UserInfoSchema = new Schema({
     date: Date,
     steps: Number,
     caloriesOut: Number,
@@ -21,8 +21,8 @@ var UserSchema = new Schema({
     stepsGoal: Number,
     joinDate: Date,
     displayName: String,
-    infoByDate: [InfoSchema]
+    infoByDate: [UserInfoSchema]
 });
 
 var User = mongoose.model('User', UserSchema);
-var Info = mongoose.model('Info', InfoSchema);
+var UserInfo = mongoose.model('UserInfo', UserInfoSchema);
